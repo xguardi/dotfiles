@@ -2,16 +2,26 @@
 
 " Plugins
 call plug#begin()
-Plug 'drewtempelmeyer/palenight.vim'
-Plug 'itchyny/lightline.vim'
+Plug 'drewtempelmeyer/palenight.vim'                                 " colorscheme
+Plug 'flrnprz/plastic.vim'
+Plug 'itchyny/lightline.vim'    	" A light and configurable statusline/tabline plugin for Vim
 Plug 'Vigemus/iron.nvim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'liuchengxu/vim-which-key'
 Plug 'tmhedberg/SimpylFold'
-Plug 'Valloric/YouCompleteMe'   " Syntax autocomplete
-Plug '/usr/local/opt/fzf'       " Fuzzy File Finder
-Plug 'junegunn/fzf.vim'         " Fuzzy File Finder
-Plug 'tpope/vim-obsession'  " Continuously updated session files
+Plug 'Valloric/YouCompleteMe'   	" Syntax autocomplete
+Plug '/usr/local/opt/fzf'       	" Fuzzy File Finder
+Plug 'junegunn/fzf.vim'         	" Fuzzy File Finder
+Plug 'tpope/vim-obsession'  		" Continuously updated session files
+Plug 'christoomey/vim-tmux-navigator'	" Seamless pane navigation for vim AND tmux
+Plug 'jpalardy/vim-slime'		" connect to a REPL
+Plug 'rhysd/vim-clang-format'		" auto formatter
+Plug 'sgur/vim-editorconfig'		" editorconfig.org
+Plug 'vim-pandoc/vim-pandoc'		" pandoc document converter (needed for RMarkdown)
+Plug 'vim-pandoc/vim-pandoc-syntax'	" pandoc syntax module
+Plug 'vim-pandoc/vim-rmarkdown'		" Rmarkdown support
+"Plug 'godlygeek/tabular'		" Markdown support
+"Plug 'plasticboy/vim-markdown'		" Markdown support
 call plug#end()
 
 " Leader key
@@ -35,7 +45,7 @@ set showmode
 set showcmd           " Display incomplete commands
 set visualbell
 set ruler             " mostrar la regla que indica fila/columna
-set relativenumber	  " relative line numbering
+set relativenumber	" relative line numbering
 set number		      " set absolute number as well!
 set cursorline        " highlight cursor line
 set laststatus=2
@@ -49,8 +59,11 @@ if (has("termguicolors"))
 endif
 
 " Color scheme
+" set background=dark
+" colorscheme palenight
 set background=dark
-colorscheme palenight
+colorscheme plastic
+let g:lightline = { 'colorscheme': 'plastic' }             " lightline
 
 " The new app touchbar on the new macbook sucks. A virtual ESC button is no
 " button at all.
@@ -62,7 +75,7 @@ set smartcase          " if uppercase in search does case sensitive search
 set incsearch
 set showmatch
 set hlsearch
-nnoremap <leader><space> :noh<cr> " removes highlighted matches
+nmap <Esc> <Esc>:nohlsearch<CR>	" removes highlighted matches 
 
 " spell 
 set spell spelllang=ca,en_us
@@ -72,14 +85,13 @@ set nospell " deactivated by default
 "hi clear SpellBad
 "hi SpellBad cterm=underline
 
-
 ",v brings up my .vimrc
 ",V reloads it -- making all changes active (have to save first)
 map ,v :e ~/.config/nvim/init.vim<CR><C-W>_
 map <silent> ,V :source ~/.config/nvim/init.vim<CR>:filetype detect<CR>:exe ":echo 'init.vim reloaded'"<CR>
 
 ",v brings up my vim cheat sheet file
-map ,h :e ~/.config/nvim/vim_cheatsheet.md<CR><C-W>
+map ,h :e ~/.config/nvim/vim_cheatsheet.txt<CR><C-W>
 
 " per recarregar la pàgina
 map <F5> :e!<CR>
@@ -140,3 +152,8 @@ endif
 " FZF Fuzzy File Finder
 nnoremap <C-p> :<C-u>FZF<CR>
 
+" Slime (connect to REPL) stuff
+let g:slime_target = 'tmux'
+let g:slime_paste_file = "$HOME/.slime_paste"
+let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
+let g:slime_python_ipython = 1
