@@ -1,0 +1,166 @@
+-- ----------------------------------------
+-- xguardi's neovim config file 
+-- ----------------------------------------
+
+-------------------------------------------
+-- Basic options
+-------------------------------------------
+
+-- Enable line number
+vim.opt.number = true
+
+-- width of tab
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 2
+
+-- use number of spaces to insert <Tab>
+vim.opt.expandtab = true
+
+-- indent a new line the same amount as the line just typed
+vim.opt.autoindent = true
+
+-- show cursor line
+vim.opt.cursorline = true
+
+-- start scrolling a few lines before the bottom line
+vim.opt.scrolloff = 5
+
+-------------------------------------------
+-- Keymaps
+-------------------------------------------
+
+-- Leader key
+vim.g.mapleader = ','
+
+-- map leader+y to copy to system clipboard in normal and visual mode
+vim.keymap.set({ "n", "v" }, "<Leader>y", '"+y', { noremap = true, silent = true })
+
+-------------------------------------------
+-- Lazy plugin manager
+-------------------------------------------
+
+
+-- Check Lazy (plugins manager) is installed
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- Lazy plugins
+local plugins = {
+	{ "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+	{ "nvim-telescope/telescope.nvim", tag = '0.1.5', dependencies = { 'nvim-lua/plenary.nvim' } },
+  { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
+  { "iamcco/markdown-preview.nvim",
+    cmd = {"MarkdownPreview", "MarkdownPreviewStop"},
+    lazy = false,
+    build = function() vim.fn["mkdp#util#install"]() end, },
+  { "nvim-lualine/lualine.nvim", dependencies = { 'nvim-tree/nvim-web-devicons' }},
+  { "nvim-treesitter/nvim-treesitter",
+    run = ":TSUpdate",
+    config = function ()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "markdown", "markdown_inline", "r", "rnoweb" },
+      })
+    end },
+  -- vim-slime sending text to REPL
+  {"jpalardy/vim-slime"},
+  -- Comments
+  {'numToStr/Comment.nvim',
+    opts = {
+        -- add any options here
+    }
+  }
+}
+local opts = {}
+
+require("lazy").setup(plugins, opts)
+
+-- Set color scheme
+vim.opt.termguicolors = true
+vim.cmd.colorscheme 'catppuccin'
+
+-- Statusline
+-- overwritting the default config
+require('lualine').setup {
+  options = {
+      component_separators = '|',
+      section_separators = { left = '', right = '' }
+  },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch', 'diff', 'diagnostics'},
+    lualine_c = {'filename'},
+    lualine_x = {'filetype'},
+    lualine_y = {'progress'},
+    lualine_z = {'location'}
+  }
+}
+
+-- Telescope 
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+
+-- Treesitter
+local treesitter_config = require('nvim-treesitter.configs')
+treesitter_config.setup({
+    ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "r", "python", "javascript", "html" },
+    sync_install = false,
+    highlight = { enable = true },
+    indent = { enable = true },
+})
+
+-- vim-slime
+vim.g.slime_target = 'tmux'
+-- vim.g.slime_default_config = {"socket_name" = "default", "target_pane" = "{last}"}
+vim.g.slime_default_config = {
+  -- Lua doesn't have a string split function!
+  socket_name = vim.api.nvim_eval('get(split($TMUX, ","), 0)'),
+  target_pane = '{right}',
+}
+
+-- View current file in browser (or the right app)
+vim.keymap.set('n', '<leader>b', ':!open %<CR>')
+
+-- Custom stuff
+
+-- Shortcuts
+vim.api.nvim_set_keymap('n', '<leader>h', ':e ~/paperets/howto/<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>v', ':e ~/.config/nvim/init.lua<CR>', { noremap = true, silent = true })
+
+-- Insert current date with <leader>d
+local function insert_date()
+    local date = os.date("%d-%m-%Y") 
+    local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+    vim.api.nvim_buf_set_text(0, line - 1, col, line - 1, col, { date })
+end
+-- Make the function globally accessible
+_G.insert_date = insert_date
+-- Map
+vim.api.nvim_set_keymap('n', '<leader>d', ':lua insert_date()<CR>', { noremap = true, silent = true })
+
+-- Function to reload the Neovim configuration
+local function reload_config()
+    for name, _ in pairs(package.loaded) do
+        if name:match('^user_conf') then
+            package.loaded[name] = nil
+        end
+    end
+    dofile(vim.fn.stdpath('config') .. '/init.lua')
+    print("Configuration reloaded!")
+end
+-- Map
+vim.api.nvim_create_user_command('ReloadConfig', reload_config, {})
+vim.api.nvim_set_keymap('n', '<leader>V', ':ReloadConfig<CR>', { noremap = true, silent = true })

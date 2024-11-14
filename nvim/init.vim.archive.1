@@ -1,0 +1,210 @@
+" --------------------------------
+" xguardi's init.vim file
+" --------------------------------
+
+set iskeyword-=_ 			        " Treat _ as a word
+set nobackup          			    " no backup files
+set noswapfile
+set tabstop=4               		" number of columns occupied by a tab 
+set softtabstop=4           		" see multiple spaces as tabstops so <BS> does the right thing
+set expandtab               		" converts tabs to white space
+set shiftwidth=4            		" width for autoindents
+set autoindent              		" indent a new line the same amount as the line just typed
+
+" filetype specific customisations overruling any global filetype plugin 
+" will be found at:
+" vim ~/.config/nvim/after/ftplugin/fortran.vim (for example)
+" There is were we will keep vimrc's filetype customisations and keep this
+" main config file clear.
+
+" Plugin manager
+" https://github.com/junegunn/vim-plug
+" :PluginInstall: Install new plugins
+" :PluginClean: Remove deleted plugins
+" :PluginUpdate: Update all plugins
+
+call plug#begin()
+
+" markdown preview
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+
+"Plug 'preservim/nerdtree'		" NerdTree
+"Plug 'flrnprz/plastic.vim'
+Plug 'itchyny/lightline.vim'    	" A light and configurable statusline/tabline plugin for Vim
+"Plug 'Vigemus/iron.nvim'
+"Plug 'liuchengxu/vim-which-key'
+"Plug 'Valloric/YouCompleteMe'   	" Syntax autocomplete
+Plug 'junegunn/fzf.vim'         	" Fuzzy File Finder
+Plug 'junegunn/fzf'         	" Fuzzy File Finder
+"Plug 'tpope/vim-obsession'  		" Continuously updated session files
+Plug 'tpope/vim-commentary'		" comment stuff out 
+"Plug 'tpope/vim-fugitive'		" A Git wrapper so awesome, it should be illegal
+"Plug 'tpope/vim-surround'		" Quoting/parenthesizing made simple 
+"Plug 'christoomey/vim-tmux-navigator'	" Seamless pane navigation for vim AND tmux
+"Plug 'jpalardy/vim-slime'		" connect to a REPL
+"Plug 'rhysd/vim-clang-format'		" auto formatter
+"Plug 'sgur/vim-editorconfig'		" editorconfig.org
+"Plug 'vim-pandoc/vim-pandoc'		" pandoc document converter (needed for RMarkdown)
+"Plug 'vim-pandoc/vim-pandoc-syntax'	" pandoc syntax module
+"Plug 'vim-pandoc/vim-rmarkdown'		" Rmarkdown support
+Plug 'sainnhe/everforest'		" everforest colorscheme
+"Plug 'sophacles/vim-processing'		" Create and run processing sketches in Vim
+"Plug 'godlygeek/tabular'		" Markdown support
+"Plug 'plasticboy/vim-markdown'		" Markdown support
+"Plug 'mhinz/vim-startify'		" The fancy start screen for Vim
+Plug 'junegunn/goyo.vim'		" Distraction-free writing in Vim
+"Plug 'reedes/vim-pencil'		" Rethinking Vim as a tool for writing
+call plug#end()
+
+" UI config
+set scrolloff=5			      	" mantenim sempre unes poques línies de context en el scroll
+set showmode 
+set showcmd           			" Display incomplete commands
+set visualbell
+set ruler             			" mostrar la regla que indica fila/columna
+set relativenumber			" relative line numbering
+set number		      		" set absolute number as well!
+set cursorline        			" highlight cursor line
+set laststatus=2
+set wrap linebreak			" no word breaks when wrapping text http://vimcasts.org/episodes/soft-wrapping-text/
+
+" Folding
+setlocal foldmethod=marker		" folds with markers for vim files
+set foldlevel=99		" Start with all folds expanded
+nnoremap <space> za 			" Enable folding with the spacebar
+
+let g:SimpylFold_docstring_preview=1
+let g:SimpylFold_fold_import=0
+
+" Color Scheme
+" True colors
+if (has("termguicolors"))
+  set termguicolors
+endif
+set background=dark
+" Set contrast.
+" This configuration option should be placed before `colorscheme everforest`.
+" Available values: 'hard', 'medium'(default), 'soft'
+let g:everforest_background = 'hard'
+" For better performance
+let g:everforest_better_performance = 1
+colorscheme everforest
+
+" Searching 
+set ignorecase
+set smartcase 				" if uppercase in search does case sensitive search
+set incsearch
+set showmatch
+set hlsearch
+nmap <silent> ,<space> :nohlsearch<CR>	" removes highlighted matches 
+
+" Navigation 
+
+" Open new split panes to right and bottom, which feels more natural
+set splitbelow
+set splitright
+
+"split navigations
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" FZF Fuzzy File Finder
+nnoremap <C-p> :<C-u>FZF<CR>
+
+" Leader & custom bindings 
+
+" Leader key
+let mapleader = ","
+let maplocalleader = "\\"
+
+" Make :grep use ripgrep
+if executable('rg')
+    set grepprg=rg\ --color=never\ --vimgrep
+endif
+
+",v brings up my .vimrc
+map ,v :e ~/.config/nvim/init.vim<CR><C-W>_
+",V reloads it -- making all changes active (have to save first)
+map <silent> ,V :source ~/.config/nvim/init.vim<CR>:filetype detect<CR>:exe ":echo 'init.vim reloaded'"<CR>
+map ,z :e ~/.zshrc<CR>				
+map ,h :e $HOWTOS_FOLDER<CR>
+
+" Note taking $NOTES_FOLDER is set in the environment
+" Nou paperet
+command! -nargs=1 NouPaperet :execute ":e" . $NOTES_FOLDER . "/paperets/" . strftime("%Y-%m-%d") . "-<args>.md"
+command! -nargs=1 NouProjecte :execute ":e" . $NOTES_FOLDER . "/projectes/" . strftime("%Y-%m-%d") . "-<args>.md"
+command! -nargs=1 NouReferencia :execute ":e" . $NOTES_FOLDER. "/referencies/" . strftime("%Y-%m-%d") . "-<args>.md"
+command! -nargs=1 NouTemporal :execute ":e" . $NOTES_FOLDER . "/temporal/" . strftime("%Y-%m-%d") . "-<args>.md"
+
+" Go to index of notes and set working directory to my notes
+nnoremap <leader>ni :e $NOTES_FOLDER<CR>
+
+" Using FZF to create formatted markdown links to files
+function! HandleFZF(file)
+    "let filename = fnameescape(fnamemodify(a:file, ":t"))
+    "why only the tail ?  I believe the whole filename must be linked unless everything is flat ...
+    let filename = fnameescape(a:file)
+    let filename_wo_timestamp = fnameescape(fnamemodify(a:file, ":t:s/^[0-9]*-//"))
+     " Insert the markdown link to the file in the current buffer
+    let mdlink = "[".filename_wo_timestamp."](".filename.")"
+    put=mdlink
+endfunction
+
+command! -nargs=1 HandleFZF :call HandleFZF(<f-args>)
+command! NouLink :call fzf#run({'sink': 'HandleFZF'})
+
+" The new app touchbar on the new macbook sucks. A virtual ESC button is no
+" button at all.
+" Alternative way to <ESC>.
+inoremap jk <ESC>
+
+" per recarregar la pàgina
+map <F5> :e!<CR>
+
+" YouCompleteMe
+" let g:ycm_autoclose_preview_window_after_completion=1
+" map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+" iron.vim (REPL) mappings
+" Map iron.vim
+nnoremap <leader>r <Plug>(iron-send-motion)
+vnoremap <leader>r <Plug>(iron-send-motion)
+
+" Spelling 
+set spell spelllang=ca,en_us
+set nospell 				" deactivated by default
+" Change highlight bad spell for a simple underline
+"hi clear SpellBad
+"hi SpellBad cterm=underline
+
+" Slime (connect to REPL) stuff 
+let g:slime_target = 'tmux'
+let g:slime_paste_file = "$HOME/.slime_paste"
+let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
+let g:slime_python_ipython = 1
+
+" Terminal 
+
+" Neovim terminal stuff
+if has('nvim')
+    " Exit terminal model with Esc
+    au TermOpen * tnoremap <Esc> <C-\><C-n>
+    " Exit FZF buffer with Esc
+    au FileType fzf tunmap <Esc>
+endif
+
+" Pandoc
+" Concealing
+let g:pandoc#syntax#conceal#use = 0
+" let g:pandoc#syntax#conceal#urls = 1
+" Disable the pandoc filetype for *.mkd and *.md files
+" let g:pandoc#filetypes#pandoc_markdown = 0
+
+" NERDTree
+nmap <C-n> :NERDTreeToggle<CR>
+
+" View file in browser
+nmap <silent> <leader>b :!open %<CR>
+
