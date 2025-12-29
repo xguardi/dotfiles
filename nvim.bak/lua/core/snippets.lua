@@ -22,4 +22,4 @@ end
 -- Make the function globally accessible
 _G.insert_date = insert_date
 -- Map
-vim.api.nvim_set_keymap('n', '<leader>d', ':lua insert_date()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>dt', ':lua insert_date()<CR>', { desc = "[P] Insert date", noremap = true, silent = true })

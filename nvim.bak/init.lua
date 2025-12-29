@@ -2,7 +2,7 @@
 -- [[ xguardi's neovim config file ]]
 --
 
--- Load modules
+-- Load modules 
 require 'core.options'
 require 'core.keymaps'
 require 'core.snippets'
@@ -31,6 +31,13 @@ require("lazy").setup({
   require 'plugins.which-key',
   require 'plugins.vim-tmux-navigator',
   require 'plugins.lualine',
+  require 'plugins.autocompletion',
+  require 'plugins.alpha',
+  require 'plugins.indent-blankline',
+  require 'plugins.nvim-colorizer',
+  require 'plugins.todo-comments',
+  require 'plugins.nvim-autopairs',
+  require 'plugins.vim-slime',
 })
 
 -- local plugins = {

@@ -7,8 +7,8 @@
 -- :lua =vim.o.number
 
 vim.opt.number = true -- Line number (default: false)
-vim.opt.wrap = false -- Display lines as one long line (default: true)
-vim.opt.linebreak = true -- Companion to wrap, don't split words (default: false)
+-- vim.opt.wrap = false -- Display lines as one long line (default: true)
+-- vim.opt.linebreak = true -- Companion to wrap, don't split words (default: false)
 vim.opt.shiftwidth = 2 -- The number of spaces inserted for each indentation (default: 8)
 vim.opt.tabstop = 2 -- Insert n spaces for a tab (default: 8)
 vim.opt.softtabstop = 2 -- Number of spaces that a tab counts for while performing editing operations (default: 0)
