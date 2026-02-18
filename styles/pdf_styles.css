@@ -1,0 +1,23 @@
+@page {
+  margin: 2cm;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: auto;
+  color: #222;
+}
+
+pre,
+code {
+  font-family: "JetBrains Mono", monospace;
+  background: #f6f8fa;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600;
+}

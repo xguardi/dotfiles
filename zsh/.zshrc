@@ -63,3 +63,10 @@ unset __conda_setup
 
 # OSBC libs
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+# bun completions
+[ -s "/Users/xavier.guardiola/.bun/_bun" ] && source "/Users/xavier.guardiola/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
