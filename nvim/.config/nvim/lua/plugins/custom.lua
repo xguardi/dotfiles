@@ -9,6 +9,9 @@ return {
   {
     "snacks.nvim",
     opts = {
+      explorer = {
+        hidden = true,
+      },
       dashboard = {
         preset = {
           pick = function(cmd, opts)
