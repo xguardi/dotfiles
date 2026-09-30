@@ -47,18 +47,24 @@ source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 export PATH="/Users/xavier.guardiola/.codeium/windsurf/bin:$PATH"
 
 # >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
+# Cached output of 'conda shell.zsh hook' -- regenerate with:
+#   conda shell.zsh hook > ~/.cache/zsh/conda-hook.zsh
+# after any conda upgrade. Avoids spawning a Python interpreter on every shell startup.
+if [ -f "$HOME/.cache/zsh/conda-hook.zsh" ]; then
+    source "$HOME/.cache/zsh/conda-hook.zsh"
 else
-    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
-        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+    __conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+    if [ $? -eq 0 ]; then
+        eval "$__conda_setup"
     else
-        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
+        if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
+            . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+        else
+            export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
+        fi
     fi
+    unset __conda_setup
 fi
-unset __conda_setup
 # <<< conda initialize <<<
 
 # OSBC libs
@@ -70,3 +76,9 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# History
+HISTSIZE=999
+
+# Machine-local secrets, not tracked by git
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
