@@ -24,7 +24,7 @@ Each top-level directory corresponds to a tool (e.g., `nvim/.config/nvim/` → `
 | Directory | Tool | Key Files |
 |-----------|------|-----------|
 | `zsh/` | Z Shell | `.zshrc`, `.zshenv` |
-| `nvim/` | Neovim (LazyVim) | `.config/nvim/lua/` |
+| `nvim/` | Neovim (hand-configured lazy.nvim) | `.config/nvim/lua/` |
 | `tmux/` | Tmux | `.tmux.conf`, `.config/tmux/` |
 | `wezterm/` | Wezterm terminal | `.config/wezterm/wezterm.lua` |
 | `starship/` | Shell prompt | `.config/starship.toml` |
@@ -40,13 +40,19 @@ Each top-level directory corresponds to a tool (e.g., `nvim/.config/nvim/` → `
 - **Session persistence** is configured in both wezterm (plugin) and tmux (tmux-resurrect + tmux-continuum, saves every 15 min)
 - **Seamless navigation** between neovim panes and tmux panes via vim-tmux-navigator
 
-### Neovim Configuration (LazyVim-based)
-Entry point: `nvim/.config/nvim/init.lua` → bootstraps LazyVim via `lua/config/lazy.lua`
+### Neovim Configuration (hand-configured lazy.nvim, not LazyVim)
+Entry point: `nvim/.config/nvim/init.lua` → bootstraps lazy.nvim via `lua/config/lazy.lua`, which loads
+`lua/config/options.lua`, then every spec under `lua/plugins/*.lua` (one file per plugin/concern), then
+`lua/config/keymaps.lua` and `lua/config/autocmds.lua`.
 
-Custom files layered on top of LazyVim:
-- `lua/config/keymaps.lua` — custom keybindings (e.g., Markdown→PDF export via pandoc/weasyprint)
-- `lua/config/options.lua` — option overrides
-- `lua/plugins/custom.lua` — plugin additions/overrides (disables bufferline, noice, markdown-lint)
+- `lua/config/keymaps.lua` — leader-based keybindings (e.g., Markdown→PDF export via pandoc/weasyprint, date insert)
+- `lua/config/options.lua` — core `vim.opt` settings, leader key, spelllang (en/es/ca)
+- `lua/config/autocmds.lua` — yank highlight, prose wrap/spell, trailing-whitespace trim
+- `lua/plugins/lsp.lua` — nvim-lspconfig + mason for lua, python, ts/js, bash, go, rust, markdown
+- `lua/plugins/treesitter.lua`, `completion.lua` (blink.cmp), `formatting.lua` (conform.nvim)
+- `lua/plugins/telescope.lua` + `oil.lua` — finding/editing files
+- `lua/plugins/gitsigns.lua`, `statusline.lua` (lualine), `which-key.lua`, `colorscheme.lua` (catppuccin)
+- `lua/plugins/tmux-navigator.lua` — vim-tmux-navigator, since LazyVim no longer provides it implicitly
 
 ### Tmux Configuration
 - Plugin manager: **tpm** (`~/.tmux/plugins/tpm`)

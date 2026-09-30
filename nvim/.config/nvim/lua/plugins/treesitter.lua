@@ -1,7 +1,9 @@
 -- `main`'s tip now requires Nvim 0.12/nightly (dropped 0.11 support in
--- 2026-04); pin to the last commit known to run on stable 0.11.x instead of
--- floating on `main` or falling back to the archived, unmaintained `master`
--- branch (whose frozen queries drift out of sync with upstream grammars).
+-- 2026-04). Pinned to the commit from the previous lazy-lock.json, which
+-- was known-working on stable 0.11.x, instead of floating on `main` or
+-- falling back to the archived, unmaintained `master` branch (whose frozen
+-- queries drift out of sync with upstream grammars). Remove this pin after
+-- upgrading to Nvim 0.12+.
 return {
   {
     "nvim-treesitter/nvim-treesitter",
@@ -43,7 +45,9 @@ return {
           "help",
         },
         callback = function()
-          vim.treesitter.start()
+          -- `install()` runs async; on a fresh machine the first FileType
+          -- event can fire before its parser is ready.
+          pcall(vim.treesitter.start)
         end,
       })
     end,
