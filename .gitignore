@@ -2,3 +2,9 @@ ssh/.ssh/id_*
 ssh/.ssh/known_hosts
 ssh/.ssh/known_hosts.old
 ssh/.ssh/authorized_keys
+
+# tmux plugins are installed by tpm into ~/.tmux/plugins
+tmux/.config/tmux/plugins/
+
+# Runtime files when ~/.ssh is folded into the repo
+ssh/.ssh/agent/

@@ -1,6 +1,6 @@
-# CLAUDE.md
+# Copilot Instructions
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to GitHub Copilot when working with code in this repository.
 
 ## Overview
 
@@ -8,7 +8,7 @@ This is a personal dotfiles repository managed with **GNU Stow**. Stow creates s
 
 ## Installation
 
-Deploy all configs at once or individually:
+On a new Mac, `./install.sh` bootstraps everything (Homebrew, `Brewfile`, stow, tpm, lazy.nvim). To relink manually:
 
 ```bash
 stow nvim tmux zsh starship wezterm ssh
@@ -18,6 +18,7 @@ stow nvim
 ```
 
 Each top-level directory corresponds to a tool (e.g., `nvim/.config/nvim/` → `~/.config/nvim/`).
+When adding a package that needs Homebrew, add it to `Brewfile` too.
 
 ## Repository Structure
 
@@ -55,7 +56,7 @@ Entry point: `nvim/.config/nvim/init.lua` → bootstraps lazy.nvim via `lua/conf
 - `lua/plugins/tmux-navigator.lua` — vim-tmux-navigator, since LazyVim no longer provides it implicitly
 
 ### Tmux Configuration
-- Plugin manager: **tpm** (`~/.tmux/plugins/tpm`)
+- Plugin manager: **tpm** (`~/.config/tmux/plugins/tpm`, set via `TMUX_PLUGIN_MANAGER_PATH`); plugins are installed by tpm and gitignored, not tracked
 - Plugins: vim-tmux-navigator, tmux-resurrect, tmux-continuum, tmux-cpu-mem-monitor
 - Theme: `~/.config/tmux/nord-theme.conf` with CPU/memory/disk stats in status bar
 
