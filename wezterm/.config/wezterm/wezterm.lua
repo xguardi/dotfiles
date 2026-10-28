@@ -4,7 +4,7 @@ local resurrect = wezterm.plugin.require("https://github.com/MLFlexer/resurrect.
 -- config_builder creates a config table with validation and helpful errors
 local config = wezterm.config_builder()
 
-config = {
+local settings = {
 
 	-- Reloads config upon save
 	automatically_reload_config = true,
@@ -43,9 +43,9 @@ config = {
 		{ key = "k", mods = "LEADER", action = wezterm.action.ActivatePaneDirection("Up") },
 		{ key = "j", mods = "LEADER", action = wezterm.action.ActivatePaneDirection("Down") },
 		-- resurrect
-		{ key = "w", mods = "LEADER", action = resurrect.window_state.save_window_action() },
+		{ key = "W", mods = "LEADER", action = resurrect.window_state.save_window_action() },
 		{
-			key = "l",
+			key = "L",
 			mods = "LEADER",
 			action = wezterm.action_callback(function(win, pane)
 				resurrect.fuzzy_loader.fuzzy_load(win, pane, function(id, label)
@@ -100,5 +100,10 @@ config = {
 
 -- Automatically save window every 15m
 resurrect.state_manager.periodic_save({ interval_seconds = 15 * 60, save_windows = true })
+
+-- Copy into the builder so wezterm validates every option
+for key, value in pairs(settings) do
+	config[key] = value
+end
 
 return config
