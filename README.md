@@ -1,37 +1,73 @@
 # xguardi dotfiles
 
-macOS configuration for zsh, Neovim, tmux, WezTerm, Starship and SSH, deployed with
-[GNU Stow](https://www.gnu.org/software/stow/).
+My personal configuration files for macOS, kept in one place and deployed with
+[GNU Stow](https://www.gnu.org/software/stow/). Every config is edited here and symlinked
+into `$HOME`, so changes are versioned and work the same on every machine.
 
-## New Mac setup
+## What's inside
+
+| Package    | Tool                         | Deployed to                            |
+|------------|------------------------------|----------------------------------------|
+| `zsh`      | Z shell                      | `~/.zshenv`, `~/.zshrc`                |
+| `nvim`     | Neovim (lazy.nvim)           | `~/.config/nvim/`                      |
+| `tmux`     | tmux + tpm plugins           | `~/.tmux.conf`, `~/.config/tmux/`      |
+| `wezterm`  | WezTerm terminal             | `~/.config/wezterm/`                   |
+| `starship` | Shell prompt                 | `~/.config/starship.toml`              |
+| `ssh`      | SSH client config (no keys)  | `~/.ssh/config`                        |
+| `styles`   | CSS for Markdown → PDF export| used in place, not stowed              |
+
+Supporting files:
+
+- `Brewfile` – Homebrew packages, casks and fonts the configs rely on, plus everyday tools.
+- `install.sh` – idempotent bootstrap: Homebrew, `Brewfile`, stow, tmux and Neovim plugins.
+- `how-to.md` – keybinding and usage cheat sheet.
+
+Shared conventions: Nord colours everywhere, `CTRL-A` as the prefix in both tmux and
+WezTerm, vi keybindings in zsh/tmux/WezTerm, and seamless Neovim ↔ tmux pane navigation.
+
+## How it works
+
+Each top-level directory is a stow *package* that mirrors the layout of `$HOME`.
+For example `nvim/.config/nvim/init.lua` becomes `~/.config/nvim/init.lua`:
 
 ```bash
-xcode-select --install          # if git is not available yet
+cd ~/dotfiles
+stow nvim            # create the symlinks for one package
+stow -R nvim         # re-link after adding or renaming files
+stow -D nvim         # remove the symlinks
+```
+
+## Setup
+
+On a fresh machine:
+
+```bash
 git clone https://github.com/xguardi/dotfiles.git ~/dotfiles
 ~/dotfiles/install.sh
 ```
 
-`install.sh` is safe to re-run. It installs Homebrew, every package in the `Brewfile` and `uv`,
-symlinks all configs with stow, then installs tmux plugins (tpm) and Neovim plugins (lazy.nvim).
-
-If you clone over HTTPS, switch to SSH once your key is on GitHub:
-`git -C ~/dotfiles remote set-url origin git@github.com:xguardi/dotfiles.git`
-
-### Manual steps
-
-- Create an SSH key (the script prints the commands if `~/.ssh/id_ed25519` is missing).
-- Put secrets and machine-specific settings in `~/.zshrc.local` (not tracked).
-- Git identity: `git config --global user.name "…"` and `git config --global user.email "…"`.
-- macOS settings:
-  - Keyboard → Modifier Keys: Caps Lock → Control (for the `CTRL-A` prefix).
-  - Keyboard Shortcuts → Input Sources: disable `Ctrl+Space`.
-  - Set WezTerm as the default terminal and log in to `gh` and `copilot`.
-
-## Updating
+On a machine that already has the tools, just link what you need:
 
 ```bash
-stow --restow zsh nvim tmux starship wezterm ssh   # relink after adding files
-brew bundle dump --force --file=~/dotfiles/Brewfile # capture newly installed packages
+cd ~/dotfiles && stow zsh nvim tmux starship wezterm ssh
 ```
 
-See `how-to.md` for keybinding notes.
+Then, once per machine:
+
+- Put secrets and machine-specific settings in `~/.zshrc.local` (sourced by `.zshrc`, never tracked).
+- Set up an SSH key or `gh auth login` for GitHub access.
+- macOS: map Caps Lock → Control, and disable the `Ctrl+Space` input-source shortcut.
+
+## Working with this repo
+
+- **Edit a config:** edit the file under `~/dotfiles` (or through its symlink) and commit.
+- **Add a new tool:** create `<tool>/` mirroring the path under `$HOME`, move the config in,
+  run `stow <tool>`, and add it to `PACKAGES` in `install.sh` and to the table above.
+- **Add a Homebrew dependency:** add a `brew`/`cask` line to `Brewfile`, then `brew bundle`.
+- **Update plugins:** `prefix + U` in tmux; `:Lazy update` in Neovim (commit `lazy-lock.json`).
+
+## Never commit
+
+SSH keys, `known_hosts`, tokens and anything in `~/.zshrc.local`. `.gitignore` covers the
+known cases. Keep `~/.ssh` and `~/.config` as real directories so stow links individual files
+instead of pulling whole directories into the repo.
